@@ -14,10 +14,13 @@ Entity :: struct {
     speed: f32,
     sprite: rl.Rectangle,
 }
-
+/////		GLOBALS		/////
 sprite_sheet: rl.Texture2D
-map_texture : rl.RenderTexture2D
+map_texture: rl.RenderTexture2D
 
+player_colliding: bool = false
+
+////		PROCS		/////
 draw_Map :: proc() {
     rl.BeginTextureMode(map_texture)
     rl.ClearBackground(rl.BLACK)
@@ -26,12 +29,13 @@ draw_Map :: proc() {
 	    if y == 0 || y == (ARENA_SIZE / SPRITE_SIZE) - 1 || x == 0 || x == (ARENA_SIZE / SPRITE_SIZE) -1 {
 		rl.DrawTextureRec(sprite_sheet, {1 * SPRITE_SIZE, 0 * SPRITE_SIZE, SPRITE_SIZE, SPRITE_SIZE}, {f32(x) * SPRITE_SIZE, f32(y) * SPRITE_SIZE}, rl.WHITE)
 	    } else { 
-		seed:= rand.int_max(2)
-		fmt.println(seed)
-		if seed == 0 {
+		seed:= rand.int_max(100)
+		if seed < 95 {
 		    rl.DrawTextureRec(sprite_sheet, {1 * SPRITE_SIZE, 1 * SPRITE_SIZE, SPRITE_SIZE, SPRITE_SIZE}, {f32(x) * SPRITE_SIZE, f32(y) * SPRITE_SIZE}, rl.WHITE)
-		} else {
+		} else if seed < 99 {
 		    rl.DrawTextureRec(sprite_sheet, {4 * SPRITE_SIZE, 4 * SPRITE_SIZE, SPRITE_SIZE, SPRITE_SIZE}, {f32(x) * SPRITE_SIZE, f32(y) * SPRITE_SIZE}, rl.WHITE)
+		} else {
+		    rl.DrawTextureRec(sprite_sheet, {5 * SPRITE_SIZE, 5 * SPRITE_SIZE, SPRITE_SIZE, SPRITE_SIZE}, {f32(x) * SPRITE_SIZE, f32(y) * SPRITE_SIZE}, rl.WHITE)
 		}
 	    }
 	}
@@ -112,6 +116,9 @@ main :: proc() {
 	// TODO loop every enemy to check collision
 	if rl.CheckCollisionRecs(player_rect, rat_rect) {
 	    fmt.println("hit")
+	    player_colliding = true
+	} else {
+	    player_colliding = false
 	}
 
 	// draw
@@ -128,13 +135,24 @@ main :: proc() {
 
 	rl.DrawTextureRec(sprite_sheet, player.sprite, player.position, rl.WHITE)
 	rl.DrawTextureRec(sprite_sheet, rat.sprite, rat.position, rl.WHITE)
+	
+	rl.EndMode2D()
+
+	// UI
+	status: cstring
+	if player_colliding {
+	    status = "DANGER!"
+	} else {
+	    status = "SAFE"
+	}
+
+	rl.DrawText(status, 10, 10, 24, rl.WHITE)
 
 	rl.EndDrawing()
     }
 
     // clean-up
     rl.UnloadTexture(sprite_sheet)
-    rl.EndMode2D()
     rl.CloseWindow()
 
 }
