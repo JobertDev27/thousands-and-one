@@ -4,7 +4,7 @@ import rl "vendor:raylib";
 import "core:math/rand"
 import "core:fmt"
 
-ARENA_SIZE :: 400
+ARENA_SIZE :: 800
 // spritesheet
 SPRITE_SIZE :: 8
 
@@ -21,9 +21,9 @@ map_texture : rl.RenderTexture2D
 draw_Map :: proc() {
     rl.BeginTextureMode(map_texture)
     rl.ClearBackground(rl.BLACK)
-    for y in 0..<50 {
-	for x in 0..<50 {
-	    if y == 0 || y == 49 || x == 0 || x == 49 {
+    for y in 0..<ARENA_SIZE / SPRITE_SIZE {
+	for x in 0..<ARENA_SIZE / SPRITE_SIZE {
+	    if y == 0 || y == (ARENA_SIZE / SPRITE_SIZE) - 1 || x == 0 || x == (ARENA_SIZE / SPRITE_SIZE) -1 {
 		rl.DrawTextureRec(sprite_sheet, {1 * SPRITE_SIZE, 0 * SPRITE_SIZE, SPRITE_SIZE, SPRITE_SIZE}, {f32(x) * SPRITE_SIZE, f32(y) * SPRITE_SIZE}, rl.WHITE)
 	    } else { 
 		seed:= rand.int_max(2)
@@ -71,10 +71,10 @@ main :: proc() {
     // build map_texture
     draw_Map()
 
+    rl.SetTargetFPS(60)
+
     for !rl.WindowShouldClose() {
 	// update
-	rl.SetTargetFPS(60)
-
 
 	// logic
 	rat_direction: rl.Vector2 = player.position - rat.position
