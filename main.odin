@@ -74,9 +74,7 @@ main :: proc() {
     rl.SetTargetFPS(60)
 
     for !rl.WindowShouldClose() {
-	// update
-
-	// logic
+	// rat pathfinding
 	rat_direction: rl.Vector2 = player.position - rat.position
 	rat.position += rl.Vector2Normalize(rat_direction) * rat.speed * rl.GetFrameTime()
 
@@ -95,6 +93,26 @@ main :: proc() {
 	}
 
 	camera.target = player.position
+
+	player_rect: rl.Rectangle = {
+	    player.position.x,
+	    player.position.y,
+	    SPRITE_SIZE,
+	    SPRITE_SIZE,
+	}
+
+	// TODO create an array of enemies then loop the collision creation
+	rat_rect: rl.Rectangle = {
+	    rat.position.x,
+	    rat.position.y,
+	    SPRITE_SIZE,
+	    SPRITE_SIZE,
+	}
+
+	// TODO loop every enemy to check collision
+	if rl.CheckCollisionRecs(player_rect, rat_rect) {
+	    fmt.println("hit")
+	}
 
 	// draw
 	rl.BeginDrawing()
